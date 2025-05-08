@@ -10,7 +10,7 @@ const app = express()
 dotenv.config()
 connectDb()
 
-app.use(passportJwtStrategy.initialize())
+app.use(passportJwtStrategy.initialize()) 
 
 const port = process.env.PORT || 8000
 

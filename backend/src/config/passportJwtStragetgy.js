@@ -1,21 +1,24 @@
 import dotenv from 'dotenv';
 import passport from 'passport';
-import { ExtractJwt, JwtStrategy} from 'passport-jwt';
+import { ExtractJwt, Strategy as JwtStrategy} from 'passport-jwt';
 
 
-import User from '../models/User.js';
+import User from '../model/userSchema.js';
+dotenv.config();
 
 const opts= {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretorKey: process.env.JWT_SECRET,
+  secretOrKey: process.env.JWT_SECRET,
 }
 
 passport.use(new JwtStrategy(opts, async (jwtpayload, done) => {
   try {
-    const user = await User.findById(jwtpayload.id);
+    const user = await User.findById(jwtpayload._id).select('-password');
+    
     if (!user) {
       return done(null, false);
     } 
+    
     return done(null, user);
   } catch (error) {
     console.log('Error in passport JWT strategy:', error);
