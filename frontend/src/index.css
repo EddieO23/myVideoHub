@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+
+
+@theme {
+  /* Text Colors */
+  --color-text-one: #1c1c1c;  /* Dark Gray-Black for primary text */
+  --color-text-two: #4d4d4d;  /* Medium Gray for secondary text */
+  
+  /* Background Colors */
+  --color-bg-one: #f0f0f0;    /* Light Gray for main backgrounds */
+  --color-bg-two: #e0e0e0;    /* Slightly darker gray for secondary backgrounds */
+  --color-bg-three: #b3b3b3;  /* Medium Gray for accents or cards */
+  --color-bg-four: #333333;   /* Dark Gray for headers or footers */
+  --color-bg-five: #000000;   /* Pure Black for high-contrast elements */
+  
+  /* Animation */
+  --animation-scale-pulse: scalePulse 2s infinite ease-in-out;
+}
+
+/* Define keyframes outside the @theme block */
+@keyframes scalePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
