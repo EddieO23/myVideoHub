@@ -1,9 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { toast } from "sonner";
+
+
 import backendApi from "../../api/backendApi.js";
 
 
 const initialState = {
-  loggedInUser: null,
+  loggedInUser: null, 
   loading: true
 }
 
@@ -19,9 +22,9 @@ export const signUpUser = createAsyncThunk("auth/sign-up-user", async (payload) 
     const {data} = await backendApi.post("/api/v1/auth/sign-up", payload)
 
     if(data.success) {
-      console.log(data.message);
+      toast.success(data.message);
     } else {
-      console.log(data.message);
+      toast.warning(data.message);
     }
 
 
