@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
  
 
 import Layout from '../../components/Layout';
+import { signInUser } from '../../reducers/auth/authReducer';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +12,8 @@ const SignIn = () => {
     password: '',
   });
 
+  const dispatch = useDispatch();
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -20,8 +24,8 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('submitted via sign in page', formData.email, formData.password);
+    const { email, password } = formData;
+    dispatch(signInUser({email, password}));
   }
 
   return (
