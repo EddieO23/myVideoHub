@@ -1,7 +1,8 @@
 import React, { use, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { FaHome } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { FaBars, FaHome, FaTimes } from 'react-icons/fa';
+import { IoIosLogOut } from 'react-icons/io';
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +12,7 @@ const SideBar = () => {
 
   const toggleSidebar = () => {
     setIsOpen((prev) => !prev);
-  }
+  };
 
   return (
     <>
@@ -27,7 +28,7 @@ const SideBar = () => {
           <ul className='space-y-2'>
             <li>
               <NavLink
-              onclick={toggleSidebar}
+                onclick={toggleSidebar}
                 to={'/'}
                 className='flex items-center p-3 text-gray-900  hover:bg-gray-200 hover:text-gray-300 rounded-md'
               >
@@ -35,9 +36,9 @@ const SideBar = () => {
                 <span>Home</span>
               </NavLink>
             </li>
-           <li>
+            <li>
               <NavLink
-              onclick={toggleSidebar}
+                onclick={toggleSidebar}
                 to={'/myvideos'}
                 className='flex items-center p-3 text-gray-900  hover:bg-gray-200 hover:text-gray-300 rounded-md'
               >
@@ -47,8 +48,8 @@ const SideBar = () => {
             </li>
             <li>
               <NavLink
-              onclick={toggleSidebar}
-                to={'/userprofile'}
+                onclick={toggleSidebar}
+                to={'/user/profile'}
                 className='flex items-center p-3 text-gray-900  hover:bg-gray-200 hover:text-gray-300 rounded-md'
               >
                 <FaHome size={20} className='mr-3' />
@@ -56,17 +57,23 @@ const SideBar = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink
-              onclick={toggleSidebar}
-                to={'/logouy'}
-                className='flex items-center p-3 text-gray-900  hover:bg-gray-200 hover:text-gray-300 rounded-md'
-              >
-                <FaHome size={20} className='mr-3' />
+              <div className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md cursor-pointer'>
+                <IoIosLogOut size={20} className='mr-3' />
                 <span>Logout</span>
-              </NavLink>
+              </div>
             </li>
           </ul>
         </nav>
+      </div>
+      {/* top navbar */}
+      <div className='fixed top-0 left-0 right-0 bg-black lg:hidden text-white h-12 items-center px-4 shadow-md z-50 '>
+        <button onClick={toggleSidebar} className='lg:hidden text-white text-2xl'>
+          {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        </button>
+        <div className=" w-full flex items-center justify-center">
+          <NavLink to={'/'} className={'text-lg font-semibold'}>My Video Hub</NavLink>
+        </div>
+        <button></button>
       </div>
     </>
   );
