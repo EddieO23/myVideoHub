@@ -45,7 +45,7 @@ export const signInUser = async (req, res) => {
       return sendResponse(res, 400, false, 'Passwords do not match');
     }
     const jwtToken = await generateJwtToken(user);
-    sendResponse(res, 200, true, 'User signed in successfully', {user: {token: jwtToken}});
+    sendResponse(res, 200, true, 'Logged in successfully', {user: {token: jwtToken}});
   } catch (error) {
     console.error(`Error in signing in the user ${error}`);
     return sendResponse(res, 500, false, 'Internal server error');
