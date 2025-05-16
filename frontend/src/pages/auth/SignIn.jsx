@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
  
 
 import Layout from '../../components/Layout';
+import { signInUser } from '../../reducers/auth/authReducer';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +12,8 @@ const SignIn = () => {
     password: '',
   });
 
+  const dispatch = useDispatch();
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -20,8 +24,8 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('submitted via sign in page', formData.email, formData.password);
+    const { email, password } = formData;
+    dispatch(signInUser({email, password}));
   }
 
   return (
@@ -72,7 +76,7 @@ const SignIn = () => {
               type='submit'
               className={`w-full py-3 px-4 bg-green-500 text-white font-bold rounded-md shadow-md transition duration-300 disabled:bg-green-300 disabled:cursor-not-allowed flex items-center justify-center`}
             >
-              Sign Up
+              Sign In
             </button>
           </form>
           <Link to={'/sign-up'} className='text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-all duration-300'>Sign Up for FREE</Link>

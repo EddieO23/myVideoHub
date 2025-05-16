@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+
 import Layout from '../../components/Layout';
+import { signUpUser } from '../../reducers/auth/authReducer';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   })
+
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,7 +23,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission logic here
-    console.log(formData.email, formData.password);
+    dispatch(signUpUser(formData))
   };
 
   return (
