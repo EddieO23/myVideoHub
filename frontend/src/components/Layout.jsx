@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
         </div>
       </nav>
       <header></header>
-      <main className='flex-1 flex flex-col items-center wfull mt-16'>
+      <main className='flex-1 flex flex-col items-center w-full mt-16'>
         {children}
       </main>
       <footer className='bg-black text-center  py-6 border-t-[1px] border-t-black z-50 '>
