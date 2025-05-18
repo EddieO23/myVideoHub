@@ -1,22 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import SideBar from '../../components/SideBar';
-import { useSelector } from 'react-redux';
-import { selectLoggedInUser } from '../../reducers/auth/authReducer.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectLoggedInUser, updateUser } from '../../reducers/auth/authReducer.js';
+import { toast } from 'sonner';
+import backendApi from '../../api/backendApi.js';
 
-const UserProfile = () => { 
-  const loggedInUser = useSelector(selectLoggedInUser)
+const UserProfile = () => {
+  const loggedInUser = useSelector(selectLoggedInUser);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [edit, setEdit] = useState(false);
 
+  const dispatch = useDispatch()
+  
   useEffect(() => {
-    if(loggedInUser?.name) {
+    if (loggedInUser?.name) {
       setName(loggedInUser.name);
     }
-    if(loggedInUser?.email) {
+    if (loggedInUser?.email) {
       setEmail(loggedInUser.email);
     }
-  }, [loggedInUser])
+  }, [loggedInUser]);
+
+  const handleEditClick = () => {
+    setEdit((prev) => !prev);
+  };
+
+  const token = localStorage.getItem('token')
+
+  const handleSaveClick = async () => {
+    try {
+      const {data} = await backendApi.post('/api/v1/user/update', {name, email}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if(data.success) {
+        toast.success(data.message)
+        dispatch(updateUser({email, name}))
+        setEdit(false)
+      } else {
+        toast.warning(data.message)
+      }
+    } catch (error) {
+      toast.error('Internal server error');
+    }
+  };
 
   return (
     <div className='flex w-full pr-2 h-screen'>
@@ -40,7 +69,9 @@ const UserProfile = () => {
                     value={name}
                     disabled={!edit}
                     onChange={(e) => setName(e.target.value)}
-                    className={`w-full p-3 focus:outline-none border rounded-md ${edit ? 'border-blue-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500 bg-gray-300` }
+                    className={`w-full p-3 focus:outline-none border rounded-md ${
+                      edit ? 'border-blue-500' : 'border-gray-300'
+                    } focus:ring-2 focus:ring-blue-500 bg-gray-300`}
                   />
                 </div>
               </div>
@@ -58,13 +89,19 @@ const UserProfile = () => {
                     value={email}
                     disabled={!edit}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={`w-full p-3 focus:outline-none border rounded-md ${edit ? 'border-blue-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500 bg-gray-300` }
+                    className={`w-full p-3 focus:outline-none border rounded-md ${
+                      edit ? 'border-blue-500' : 'border-gray-300'
+                    } focus:ring-2 focus:ring-blue-500 bg-gray-300`}
                   />
                 </div>
               </div>
             </div>
-            <div className="flex justify-end">
-              <button onClick={() => setEdit(true)} type='button' className='bg-blue-500 text-white py-2 px-4 rounded-md focus:outline-none hover:bg-blue-600'>
+            <div className='flex justify-end'>
+              <button
+                onClick={() => (edit ? handleSaveClick() : handleEditClick())}
+                type='button'
+                className='bg-blue-500 text-white py-2 px-4 rounded-md focus:outline-none hover:bg-blue-600'
+              >
                 {edit ? 'Save' : 'Edit'}
               </button>
             </div>
