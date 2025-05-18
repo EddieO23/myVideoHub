@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaBars, FaHome, FaTimes, FaUser } from 'react-icons/fa';
+import { FaBars, FaHome, FaTimes, FaUser, FaUpload, FaVideo, FaCog } from 'react-icons/fa';
 import { IoIosLogOut } from 'react-icons/io';
 import { fetchUserDetails, logOutUser } from '../reducers/auth/authReducer';
-
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -56,12 +55,32 @@ const SideBar = () => {
                 to={'/user/upload-video'}
                 className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md'
               >
-                <FaHome size={20} className='mr-3' />
+                <FaUpload size={20} className='mr-3' />
                 <span>Upload Video</span>
               </NavLink>
             </li>
             <li>
-              <div onClick={() => dispatch(logOutUser())} className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md cursor-pointer'>
+              <NavLink
+                onClick={toggleSidebar}
+                to={'/user/upload-video'}
+                className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md'
+              >
+                <FaVideo size={20} className='mr-3' />
+                <span>My Videos</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={toggleSidebar}
+                to={'/user/upload-video'}
+                className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md'
+              >
+                <FaCog size={20} className='mr-3' />
+                <span>User Profile</span>
+              </NavLink>
+            </li>
+            <li>
+              <div onClick={() => dispatch(logOutUser(navigate))} className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md cursor-pointer'>
                 <IoIosLogOut size={20} className='mr-3' />
                 <span>Logout</span>
               </div>

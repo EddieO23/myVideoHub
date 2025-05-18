@@ -89,10 +89,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-     logOutUser: (state) => {
+     logOutUser: (state, action) => {
+      const navigate = action.payload
       localStorage.removeItem("token");
       state.loggedInUser = null;
       toast.info("We will miss you");
+      navigate('/sign-in')
     }
   },
   extraReducers: (builder) => {
@@ -120,6 +122,6 @@ const authSlice = createSlice({
 });
 
 export const authReducer = authSlice.reducer;
+export const {logOutUser} = authSlice.actions
 export const selectLoggedInUser = (state) => state.auth.loggedInUser;
 export const selectLoading = (state) => state.auth.loading;
-export const {logOutUser} = authSlice.actions
