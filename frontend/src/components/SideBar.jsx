@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FaBars, FaHome, FaTimes, FaUser } from 'react-icons/fa';
 import { IoIosLogOut } from 'react-icons/io';
-import { fetchUserDetails } from '../reducers/auth/authReducer';
+import { fetchUserDetails, logOutUser } from '../reducers/auth/authReducer';
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +61,7 @@ const SideBar = () => {
               </NavLink>
             </li>
             <li>
-              <div className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md cursor-pointer'>
+              <div onClick={() => dispatch(logOutUser())} className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md cursor-pointer'>
                 <IoIosLogOut size={20} className='mr-3' />
                 <span>Logout</span>
               </div>

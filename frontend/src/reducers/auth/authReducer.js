@@ -2,10 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'sonner';
 
 import backendApi from '../../api/backendApi.js';
+import { useNavigate } from "react-router-dom";
 
-const initialState = {
+
+const initialState = { 
   loggedInUser: null,
-  loading: true,
+  loading: false,
 };
 
 // Sgn Up Request to the backend
@@ -31,18 +33,18 @@ export const signInUser = createAsyncThunk(
   'auth/sign-in-user',
   async (payload, thunkApi) => {
     try {
-      const { email, password } = payload;
+      const { email, password, navigate } = payload;
       const { data } = await backendApi.post('/api/v1/auth/sign-in', {
         email,
         password,
       });
-      if (data.success) {
+      if (data.success && data.user?.token) {
         if (data.user) {
           toast.success(data.message);
           localStorage.setItem('token', data.user.token); // Assuming the token is in data.token
+          navigate('/user/profile')
         }
         return data.user; // Return the user data to be used in the reducer
-        // todo: redirect to the profile page
       } else {
         toast.warning(data.message);
         return thunkApi.rejectWithValue(data.message); // Reject with the error message
@@ -86,7 +88,13 @@ export const fetchUserDetails = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+     logOutUser: (state) => {
+      localStorage.removeItem("token");
+      state.loggedInUser = null;
+      toast.info("We will miss you");
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signInUser.pending, (state) => {
@@ -114,3 +122,4 @@ const authSlice = createSlice({
 export const authReducer = authSlice.reducer;
 export const selectLoggedInUser = (state) => state.auth.loggedInUser;
 export const selectLoading = (state) => state.auth.loading;
+export const {logOutUser} = authSlice.actions

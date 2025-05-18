@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
  
 
 import Layout from '../../components/Layout';
-import { signInUser } from '../../reducers/auth/authReducer';
+import { selectLoading, signInUser } from '../../reducers/auth/authReducer';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const loading = useSelector(selectLoading)
+
+  const navigate = useNavigate()
 
   const dispatch = useDispatch();
   
@@ -25,7 +29,7 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
-    dispatch(signInUser({email, password}));
+    dispatch(signInUser({email, password, navigate}));
   }
 
   return (
@@ -72,11 +76,13 @@ const SignIn = () => {
                 onChange={handleChange}
               />
             </div>
+            {/* Sign in button with loader */}
             <button
+              disabled={loading}
               type='submit'
               className={`w-full py-3 px-4 bg-green-500 text-white font-bold rounded-md shadow-md transition duration-300 disabled:bg-green-300 disabled:cursor-not-allowed flex items-center justify-center`}
             >
-              Sign In
+              {loading ? 'Verifying...' : 'Sign In'}
             </button>
           </form>
           <Link to={'/sign-up'} className='text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-all duration-300'>Sign Up for FREE</Link>
