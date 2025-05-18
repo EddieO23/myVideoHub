@@ -4,6 +4,7 @@ import User from '../../model/userSchema.js';
 import sendResponse from '../../utils/sendResponse.js';
 import { comparePassword, hashPassword } from '../../utils/passwordHelper.js';
 import { generateJwtToken } from '../../utils/generateJwtToken.js';
+import { resetPasswordEmail } from '../../mailer/resetPassword.js';
 
 export const signUpUser = async (req, res) => {
   try {
@@ -46,6 +47,24 @@ export const signInUser = async (req, res) => {
     }
     const jwtToken = await generateJwtToken(user);
     sendResponse(res, 200, true, 'Logged in successfully', {user: {token: jwtToken}});
+  } catch (error) {
+    console.error(`Error in signing in the user ${error}`);
+    return sendResponse(res, 500, false, 'Internal server error');
+  }
+}
+
+export const sendEmailForResetPassword = async (req, res) => {
+  try {
+    const {email} = req.body
+    if(!email) {
+      return sendResponse(res, 404, false, 'Email not found.')
+    }
+    const user = await User.findOne({email})
+    if(!user) {
+      return sendResponse(res, 404, false, 'User not found.')
+    }
+    await resetPasswordEmail(user)
+    sendResponse(res, 200, true, 'Check your email to reset your password.')
   } catch (error) {
     console.error(`Error in signing in the user ${error}`);
     return sendResponse(res, 500, false, 'Internal server error');
