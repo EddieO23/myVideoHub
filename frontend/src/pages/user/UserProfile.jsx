@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectLoggedInUser, updateUser } from '../../reducers/auth/authReducer.js';
 import { toast } from 'sonner';
 import backendApi from '../../api/backendApi.js';
+import { useConfig } from '../../customHooks/useConfigHook.js';
 
 const UserProfile = () => {
   const loggedInUser = useSelector(selectLoggedInUser);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [edit, setEdit] = useState(false);
+  const {configWithJwt} = useConfig()
 
   const dispatch = useDispatch()
   
@@ -26,15 +28,9 @@ const UserProfile = () => {
     setEdit((prev) => !prev);
   };
 
-  const token = localStorage.getItem('token')
-
   const handleSaveClick = async () => {
     try {
-      const {data} = await backendApi.post('/api/v1/user/update', {name, email}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const {data} = await backendApi.post('/api/v1/user/update', {name, email}, configWithJwt )
       if(data.success) {
         toast.success(data.message)
         dispatch(updateUser({email, name}))
