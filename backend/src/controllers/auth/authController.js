@@ -18,7 +18,7 @@ export const signUpUser = async (req, res) => {
 
     // Hash the password
     const hashedPassword = await hashPassword(password);
-    const newUser = await User.create({
+    await User.create({
       email,
       password: hashedPassword,
       token: crypto.randomBytes(16).toString('hex'),
@@ -86,6 +86,7 @@ export const updatePassword = async (req, res) => {
     }
     const hashedPassword = await hashPassword(password);
     user.password = hashedPassword;
+    (user.token = crypto.randomBytes(16).toString('hex')),
     await user.save();
     return sendResponse(res, 200, true, 'Updated your password.');
   } catch (error) {
