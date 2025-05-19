@@ -76,6 +76,10 @@ const SignIn = () => {
                 onChange={handleChange}
               />
             </div>
+            <div className="">
+              <Link className='text-indigo-500' to={`/reset-password`}>Forgot Your Password?</Link>
+
+            </div>
             {/* Sign in button with loader */}
             <button
               disabled={loading}
