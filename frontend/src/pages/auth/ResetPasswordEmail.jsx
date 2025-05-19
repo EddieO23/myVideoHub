@@ -51,6 +51,7 @@ const ResetPasswordEmail = () => {
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder='Enter Your Email'
               />
               <button
                 type='submit'
@@ -61,7 +62,7 @@ const ResetPasswordEmail = () => {
               </button>
             </div>
             <div className="text-center mt-4">
-              <span className="text-sm text-gray-600">Not a member yet?</span>
+              <span className="text-sm text-gray-600">Not a member yet? </span>
               <Link to={`/sign-up`}>Sign Up For Free.</Link>
             </div>
           </form>
