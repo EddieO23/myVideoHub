@@ -2,7 +2,7 @@ import express from 'express';
 
 
 import {upload} from '../middleware/multers3Middleware.js'
-import {uploadFile} from '../controller/aws/awsFileController.js'
+import {uploadFile} from '../controllers/aws/awsFileController.js'
 
 const router = express.Router();
 
