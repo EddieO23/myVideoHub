@@ -10,6 +10,7 @@ import {
 } from './components/ProtectedRouter.jsx';
 import ResetPasswordEmail from './pages/auth/ResetPasswordEmail.jsx';
 import UpdatePassword from './pages/auth/UpdatePassword.jsx';
+import Upload from './pages/user/Upload.jsx';
 
 export const router = createBrowserRouter([
   { path: '/sign-up', element: <ProtectedRoute element={<SignUp />} /> },
@@ -17,6 +18,10 @@ export const router = createBrowserRouter([
   {
     path: '/user/profile',
     element: <ProtectedRouteHome element={<UserProfile />} />,
+  },
+  {
+    path: '/user/upload-video',
+    element: <ProtectedRouteHome element={<Upload />} />,
   },
   {
     path: '/reset-password',
