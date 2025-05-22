@@ -1,8 +1,10 @@
 import React from 'react';
-import { useQuill } from 'react-quilljs';
-import 'quill/dist/quill.snow.css'; // Import CSS from Quill
-import SideBar from '../../components/SideBar';
 import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+
+import SideBar from '../../components/SideBar';
+
 const Upload = () => {
   return (
     <div className='flex w-full'>

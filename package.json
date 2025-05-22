@@ -6,5 +6,8 @@
     "dev": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "npm --prefix frontend run dev",
     "start:backend": "npm --prefix backend run dev"
+  },
+  "dependencies": {
+    "react-quill": "^2.0.0"
   }
 }
