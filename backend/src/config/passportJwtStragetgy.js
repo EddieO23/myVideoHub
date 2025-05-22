@@ -22,7 +22,7 @@ passport.use(new JwtStrategy(opts, async (jwtpayload, done) => {
     return done(null, user);
   } catch (error) {
     console.log('Error in passport JWT strategy:', error);
-    return done(error, false);
+    return done(error);
   }
 }))
 
