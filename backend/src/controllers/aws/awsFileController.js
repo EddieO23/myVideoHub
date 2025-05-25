@@ -113,3 +113,27 @@ export const fetchVideos = async (req, res) => {
     return sendResponse(res, 500, false, 'Internal server error') ;
   }
 }
+
+// fetch single video
+
+export const fetchSingleVideo = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if(!id) {
+      return sendResponse(res, 400, false, 'Video ID is required');
+    }
+
+    const video =  await Video.findById(id).populate('uploadedBy', 'email');
+
+    if(!video) {
+      return sendResponse(res, 404, false, 'Video not found');
+    }
+
+    sendResponse(res, 200, true, 'Found your video', {video})
+
+  } catch (error) {
+    console.error('Error fetching video:', error);
+    return sendResponse(res, 500, false, 'Internal server error') ;
+  }
+}
