@@ -67,15 +67,20 @@ const Upload = () => {
           ...configWithJwt,
           headers: {
             ...configWithJwt.headers,
-            'Content-Type': 'multipart/form-data', // Fixed syntax error
+            'Content-Type': 'multipart/form-data', 
           },
         }
       );
 
       if (data.success) {
         toast.success('Video uploaded successfully', data.message);
+        setTitle('');
+        setIsPrivate('false');
+        setVideoSrc(null);
+        setDescription('');
+        setThumbnailSrc(null);
       } else {
-        toast.error('Error uploading video', data.message);
+        toast.warning('Error uploading video', data.message);
       }
     } catch (error) {
       toast.error('Error uploading video');
@@ -185,7 +190,33 @@ const Upload = () => {
               type='submit'
               className='bg-bg-four rounded-md p-2 text-white text-lg mt-5 hover:bg-opacity-70 duration-300 capitalize w-full md:w-fit flex items-center justify-center disabled:cursor-not-allowed'
             >
-              Upload Video
+              {isLoading ? (
+                  <>
+                    <svg
+                      className="animate-spin mr-2 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                      ></path>
+                    </svg>
+                    uploading...
+                  </>
+                ) : (
+                  "Upload video"
+                )}
             </button>
           </form>
         </section>

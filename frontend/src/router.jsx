@@ -13,7 +13,8 @@ import UpdatePassword from './pages/auth/UpdatePassword.jsx';
 import Upload from './pages/user/Upload.jsx';
 
 export const router = createBrowserRouter([
-  { path: '/sign-up', element: <ProtectedRoute element={<SignUp />} /> },
+  {path: '/', element: <h1>Welcome to My-Videohub</h1>},
+  { path: '/sign-up', element: <ProtectedRoute element={<SignUp />} />},
   { path: '/sign-in', element: <ProtectedRoute element={<SignIn />} /> },
   {
     path: '/user/profile',
