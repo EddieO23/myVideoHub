@@ -137,3 +137,28 @@ export const fetchSingleVideo = async (req, res) => {
     return sendResponse(res, 500, false, 'Internal server error') ;
   }
 }
+
+// delete video
+
+export const deleteGivenVideo = async (req, res) => {
+  try {
+    const {id} = req.params
+
+    if(!id) {
+      return sendResponse(res, 400, false, 'Video ID not found');
+    }
+
+    const video = await Video.findByIdAndDelete(id);
+    
+    if(!video) {
+      return sendResponse(res, 404, false, 'Video not found');
+    }
+
+    sendResponse(res, 200, true, 'Video deleted successfully')
+
+  } catch (error) {
+    console.error('Error deleting video:', error);
+    return sendResponse(res, 500, false, 'Internal server error') ;
+  }
+}
+
