@@ -5,6 +5,7 @@ import path from 'path';
 import User from '../../model/userSchema.js';
 import Video from '../../model/videoSchema.js';
 import sendResponse from '../../utils/sendResponse.js';
+import { send } from 'process';
 
 dotenv.config();
 
@@ -16,65 +17,6 @@ const s3 = new S3Client({
   },
 });
 
-//orignal code
-
-// export const uploadFile = async (req, res) => {
-//   try {
-//     if (req.files && req.files.video) {
-//       let { title, description, isPrivate } = req.body;
-//       let baseName;
-//       const videoFile = req.files.video[0];
-//       const thumbNailFile = req.files.thumbnail ? req.files.thumbnail[0] : null;
-//       if (!title) {
-//         const extension = path.extname(videoFile.originalname);
-//         baseName = path.basename(videoFile.originalname, extension);
-//       }
-//     }
-//     if(req.user) {
-//       if('location' in videoFile){
-//         if('key' in videoFile) {
-//           const newVideo = new Video({
-//             title: title || baseName,
-//             description: description ? description : null,
-//             uploadedBy: req.user._id,
-//             path: videoFile.location,
-//             key: videoFile.key,
-//             isPrivate: isPrivate ? isPrivate : false,
-//             thumbNail: thumbNailFile ? thumbNailFile.location : 'https://placehold.co/600x400',
-//           });
-//           const user = await user.findById(req.user._id); // Fix: use lowercase 'user' as imported
-//           if (user) {
-//             user.uploadCount += 1;
-//             await user.save();
-//           }
-//           return sendResponse(res, 200, true, 'Video uploaded successfully', {
-//             success: true,
-//             message: 'Video uploaded successfully',
-//             video: {
-//               _id: newVideo._id,
-//               path: newVideo.path,
-//               title: newVideo.title,
-//               description: newVideo.description,
-//               uploadedBy: {
-//                 email: req.user?.email,
-//               },
-//               isPrivate: newVideo.isPrivate,
-//             },
-//           });
-//         }
-//         return sendResponse(res, 400, false, 'Video upload failed');
-//       }
-//       return sendResponse(res, 400, false, 'Not authorized to upload video');
-//     }
-//   } catch (error) {
-//     console.error('Error uploading file:', error);
-//     return sendResponse(res, 500, false, 'Internal server error', {
-//       success: false,
-//       message: 'Internal server error',
-//     });
-
-//   }
-// };
 
 
 export const uploadFile = async (req, res) => {
@@ -159,3 +101,15 @@ export const uploadFile = async (req, res) => {
     });
   }
 };
+
+// Read file 
+
+export const fetchVideos = async (req, res) => {
+  try {
+    const videos = await Video.find({isPrivate: false}).sort({createdAt: -1}).populate('uploadedBy', 'email');
+    sendResponse(res, 200, true, 'Videos fetched successfully', videos)
+  } catch (error) {
+    console.error('Error fetching videos:', error);
+    return sendResponse(res, 500, false, 'Internal server error') ;
+  }
+}

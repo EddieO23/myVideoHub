@@ -6,7 +6,7 @@ const videoSchema = new Schema(
     description: { type: String, default: 'default description' },
     key: { type: String, required: true },
     path: { type: String, required: true },
-    uploadedBy: {
+    uploadedBy:  {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
