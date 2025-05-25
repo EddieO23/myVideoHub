@@ -1,11 +1,11 @@
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
 import path from 'path';
 
 import User from '../../model/userSchema.js';
 import Video from '../../model/videoSchema.js';
 import sendResponse from '../../utils/sendResponse.js';
-import { send } from 'process';
+import { Readable } from 'stream';
 
 dotenv.config();
 
@@ -161,4 +161,42 @@ export const deleteGivenVideo = async (req, res) => {
     return sendResponse(res, 500, false, 'Internal server error') ;
   }
 }
+
+// download video
+
+export const downloadVideo = async (req, res) => {
+  try {
+    const {id} = req.params
+
+    if(!id) {
+      return sendResponse(res, 400, false, 'Video ID not found');
+    }
+
+    const video = await Video.findById(id);
+
+    if(!video) {
+      return sendResponse(res, 404, false, 'Video not found');
+    }
+
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: video.key,
+    }
+
+    const command = new GetObjectCommand(params);
+
+    const s3Response = await s3.send(command);
+
+    const stream = s3Response.Body
+    res.setHeader('Content-Disposition', `attachment; filename=${video.title}`);
+
+    res.setHeader('Content-Type', s3Response.ContentType || 'video/mp4');
+
+    stream.pipe(res);
+  } catch (error) {
+    console.error('Error downloading video:', error);
+    return sendResponse(res, 500, false, 'Internal server error') ;
+  }
+}
+
 
