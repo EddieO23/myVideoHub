@@ -6,7 +6,7 @@ import User from '../../model/userSchema.js';
 import Video from '../../model/videoSchema.js';
 import sendResponse from '../../utils/sendResponse.js';
 import { Readable } from 'stream';
-import { use } from 'react';
+import { log } from 'console';
 
 dotenv.config();
 
@@ -17,8 +17,6 @@ const s3 = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_KEY,
   },
 });
-
-
 
 export const uploadFile = async (req, res) => {
   try {
@@ -52,7 +50,7 @@ export const uploadFile = async (req, res) => {
     // Create new video document
     const newVideo = new Video({
       title: title || baseName,
-      description: description ? description :  undefined,
+      description: description ? description : undefined,
       uploadedBy: req.user._id,
       path: videoFile.location,
       key: videoFile.key,
@@ -103,17 +101,19 @@ export const uploadFile = async (req, res) => {
   }
 };
 
-// Read file 
+// Read file
 
 export const fetchVideos = async (req, res) => {
   try {
-    const videos = await Video.find({isPrivate: false}).sort({createdAt: -1}).populate('uploadedBy', 'email');
-    sendResponse(res, 200, true, 'Videos fetched successfully', videos)
+    const videos = await Video.find({ isPrivate: false })
+      .sort({ createdAt: -1 })
+      .populate('uploadedBy', 'email');
+    sendResponse(res, 200, true, 'Videos fetched successfully', videos);
   } catch (error) {
     console.error('Error fetching videos:', error);
-    return sendResponse(res, 500, false, 'Internal server error') ;
+    return sendResponse(res, 500, false, 'Internal server error');
   }
-}
+};
 
 // fetch single video
 
@@ -121,73 +121,71 @@ export const fetchSingleVideo = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if(!id) {
+    if (!id) {
       return sendResponse(res, 400, false, 'Video ID is required');
     }
 
-    const video =  await Video.findById(id).populate('uploadedBy', 'email');
+    const video = await Video.findById(id).populate('uploadedBy', 'email');
 
-    if(!video) {
+    if (!video) {
       return sendResponse(res, 404, false, 'Video not found');
     }
 
-    sendResponse(res, 200, true, 'Found your video', {video})
-
+    sendResponse(res, 200, true, 'Found your video', { video });
   } catch (error) {
     console.error('Error fetching video:', error);
-    return sendResponse(res, 500, false, 'Internal server error') ;
+    return sendResponse(res, 500, false, 'Internal server error');
   }
-}
+};
 
 // delete video
 
 export const deleteGivenVideo = async (req, res) => {
   try {
-    const {id} = req.params
+    const { id } = req.params;
 
-    if(!id) {
+    if (!id) {
       return sendResponse(res, 400, false, 'Video ID not found');
     }
 
     const video = await Video.findByIdAndDelete(id);
-    
-    if(!video) {
+
+    if (!video) {
       return sendResponse(res, 404, false, 'Video not found');
     }
 
-    sendResponse(res, 200, true, 'Video deleted successfully')
-
+    sendResponse(res, 200, true, 'Video deleted successfully');
   } catch (error) {
     console.error('Error deleting video:', error);
-    return sendResponse(res, 500, false, 'Internal server error') ;
+    return sendResponse(res, 500, false, 'Internal server error');
   }
-}
+};
 
 // download video
 
 export const downloadVideo = async (req, res) => {
   try {
-    const {id} = req.params
-    const {userId} = req.query
+    const { id } = req.params;
+    const { userId } = req.query;
 
-    if(!id) {
+    if (!id) {
       return sendResponse(res, 400, false, 'Video ID not found');
     }
 
     const video = await Video.findById(id);
 
-    if(!video) {
+    if (!video) {
       return sendResponse(res, 404, false, 'Video not found');
     }
 
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: video.key,
-    }
+    };
 
-    if(userId) {
+    if (userId) {
       const user = await User.findById(userId);
-      if(user) {
+      if (user) {
         user.downloadCount += 1;
         await user.save();
       }
@@ -197,7 +195,7 @@ export const downloadVideo = async (req, res) => {
 
     const s3Response = await s3.send(command);
 
-    const stream = s3Response.Body
+    const stream = s3Response.Body;
     res.setHeader('Content-Disposition', `attachment; filename=${video.title}`);
 
     res.setHeader('Content-Type', s3Response.ContentType || 'video/mp4');
@@ -205,7 +203,53 @@ export const downloadVideo = async (req, res) => {
     stream.pipe(res);
   } catch (error) {
     console.error('Error downloading video:', error);
-    return sendResponse(res, 500, false, 'Internal server error') ;
+    return sendResponse(res, 500, false, 'Internal server error');
   }
-}
+};
 
+// Update video details
+
+export const updateVideo = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return sendResponse(res, 400, false, 'Video ID not found');
+    }
+
+    const video = await Video.findById(id);
+
+    if (!video) {
+      return sendResponse(res, 404, false, 'Video not found');
+    }
+    console.log(req.body);
+    
+    // Update video details
+    Object.assign(video, req.body);
+
+    await video.save();
+
+    // check if a new video file is uploaded
+
+    if (req.files && req.files.video) {
+      const videoFile = req.files.video[0];
+      if ('location' in videoFile && 'key' in videoFile) {
+        video.path = videoFile.location;
+        video.key = videoFile.key;
+      }
+    }
+
+    // updating the thumbnail if present
+    if (req.files && req.files.thumbnail) {
+      const thumbNailFile = req.files.thumbnail[0];
+      if ('location' in thumbNailFile && 'key' in thumbNailFile) {
+        video.thumbNail = thumbNailFile.location;
+      }
+    }
+    await video.save();
+    sendResponse(res, 200, true, 'Video updated successfully', { video });
+  } catch (error) {
+    console.error('Error updating video:', error);
+    return sendResponse(res, 500, false, 'Internal server error');
+  }
+};
