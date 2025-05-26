@@ -9,12 +9,12 @@ import {
 } from 'react-icons/fa';
 import { MdAccessTime } from "react-icons/md";
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import parse from 'html-react-parser';
 
 import { selectLoggedInUser } from '../reducers/auth/authReducer';
 
-const HeroVideoCard = () => {
+const HeroVideoCard = ({video}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -106,7 +106,7 @@ const HeroVideoCard = () => {
                   onClick={handleShare}
                   size={20}
                   className='text-blue-500 hover:text-blue-700 transition-colors duration-300'
-                />
+                 />
               </div>
             </div>
           )}

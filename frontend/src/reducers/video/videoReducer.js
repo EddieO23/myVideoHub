@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 
 
 import backendApi from '../../api/backendApi';
@@ -15,17 +15,17 @@ const initialState = {
 
 export const fetchVideosForPublic = createAsyncThunk(
   'video/fetch-public-videos',
-  async (_, thunkapi) => {
+  async (_, thunkAPI) => {
     try {
-      const { data } = await backendApi.get('/api/v1/aws/fetch-videos');
+      const { data } = await backendApi.get('/api/v1/fetch-videos');
       if (data.success) {
         return data.videos || [];
       }
-      return thunkapi.rejectWithValue(data.message);
+      return thunkAPI.rejectWithValue(data.message);
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to fetch videos';
       toast.error(errorMessage);
-      return thunkapi.rejectWithValue(errorMessage);
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   }
 );
