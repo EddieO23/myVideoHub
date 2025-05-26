@@ -6,6 +6,7 @@ import User from '../../model/userSchema.js';
 import Video from '../../model/videoSchema.js';
 import sendResponse from '../../utils/sendResponse.js';
 import { Readable } from 'stream';
+import { use } from 'react';
 
 dotenv.config();
 
@@ -167,6 +168,7 @@ export const deleteGivenVideo = async (req, res) => {
 export const downloadVideo = async (req, res) => {
   try {
     const {id} = req.params
+    const {userId} = req.query
 
     if(!id) {
       return sendResponse(res, 400, false, 'Video ID not found');
@@ -181,6 +183,14 @@ export const downloadVideo = async (req, res) => {
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: video.key,
+    }
+
+    if(userId) {
+      const user = await User.findById(userId);
+      if(user) {
+        user.downloadCount += 1;
+        await user.save();
+      }
     }
 
     const command = new GetObjectCommand(params);
@@ -198,5 +208,4 @@ export const downloadVideo = async (req, res) => {
     return sendResponse(res, 500, false, 'Internal server error') ;
   }
 }
-
 
