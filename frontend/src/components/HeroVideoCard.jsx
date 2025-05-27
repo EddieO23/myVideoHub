@@ -1,4 +1,4 @@
-import React, { use, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactPlayer from 'react-player';
 import {
@@ -22,6 +22,11 @@ const HeroVideoCard = ({video}) => {
   const loggedInUser = useSelector(selectLoggedInUser);
   const dispatch = useDispatch();
   const videoRef = useRef(null);
+
+       // Debug log to see what video looks like
+  useEffect(() => {
+    console.log('Video in HeroVideoCard:', video);
+  }, [video]);
 
   useEffect(() => {
     if (video.path) {
@@ -54,6 +59,7 @@ const HeroVideoCard = ({video}) => {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     }
+
 
     return (
       <div
@@ -133,3 +139,4 @@ const HeroVideoCard = ({video}) => {
 
 
 export default HeroVideoCard;
+

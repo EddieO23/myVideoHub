@@ -1,27 +1,24 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { toast } from 'sonner'
-
-
+import { toast } from 'sonner';
 import backendApi from '../../api/backendApi';
 
 const initialState = {
-  video: [],
   publicVideo: [],
   isLoading: false,
-  editVideo: null,
+  error: null,
 };
-
-// Fetch videos for the public
 
 export const fetchVideosForPublic = createAsyncThunk(
   'video/fetch-public-videos',
   async (_, thunkAPI) => {
     try {
-      const { data } = await backendApi.get('/api/v1/fetch-videos');
-      if (data.success) {
-        return data.videos || [];
+      const response = await backendApi.get('/api/v1/fetch-videos');
+      
+      if (response.data.success) {
+        return response.data.videos || [];
       }
-      return thunkAPI.rejectWithValue(data.message);
+      
+      return thunkAPI.rejectWithValue(response.data.message);
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to fetch videos';
       toast.error(errorMessage);
@@ -30,23 +27,30 @@ export const fetchVideosForPublic = createAsyncThunk(
   }
 );
 
+
 const videoSlice = createSlice({
   name: 'video',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchVideosForPublic.pending, (state) => {
-      state.isLoading = true;
-    })
-    .addCase(fetchVideosForPublic.fulfilled, (state, action) => {
-      state.publicVideo = action.payload; 
-      state.isLoading = false;
-    })
-    .addCase(fetchVideosForPublic.rejected, (state) => {
-      state.isLoading = false;
-    });
-  }
-})
+    builder
+      .addCase(fetchVideosForPublic.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchVideosForPublic.fulfilled, (state, action) => {
+        state.publicVideo = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(fetchVideosForPublic.rejected, (state, action) => {
+        state.isLoading = false;
+        state.publicVideo = [];
+        state.error = action.payload || 'An error occurred';
+        toast.error(action.payload || 'Failed to fetch videos');
+      });
+  },
+});
 
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state) => state.video.publicVideo;
