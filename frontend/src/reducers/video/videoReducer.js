@@ -27,6 +27,23 @@ export const fetchVideosForPublic = createAsyncThunk(
   }
 );
 
+// download video
+
+export const downloadVideo = createAsyncThunk('video/download', async(payload, thunkAPI) => {
+  try {
+    const {id} = payload
+    const state = thunkAPI.getState()
+    const queryParams = state.auth.loggedInUser ? `?userId=${encodeURIComponent(state.auth.loggedInUser._id)}` : ""
+    const response = await backendApi.get(`/api/v1/download/file/${id}${queryParams}`, {
+      responseType: "blob"
+    })
+
+    const contentDisposition = response.headers['content-disposition']
+    const filename = contentDisposition ? contentDisposition.split("filename")[1].replace(/[""]/g,"")
+  } catch (error) {
+    
+  }
+})
 
 const videoSlice = createSlice({
   name: 'video',
