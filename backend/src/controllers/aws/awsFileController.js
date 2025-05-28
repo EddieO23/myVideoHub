@@ -103,17 +103,24 @@ export const uploadFile = async (req, res) => {
 
 // Read file
 
+
 export const fetchVideos = async (req, res) => {
   try {
     const videos = await Video.find({ isPrivate: false })
       .sort({ createdAt: -1 })
       .populate('uploadedBy', 'email');
-    sendResponse(res, 200, true, 'Videos fetched successfully', videos);
+    
+    // Ensure the response matches the structure expected by the frontend
+    return sendResponse(res, 200, true, 'Videos fetched successfully', {
+      success: true,
+      videos: videos // Make sure this matches the key in your frontend
+    });
   } catch (error) {
     console.error('Error fetching videos:', error);
     return sendResponse(res, 500, false, 'Internal server error');
   }
 };
+
 
 // fetch single video
 
