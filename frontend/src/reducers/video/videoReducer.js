@@ -13,14 +13,15 @@ export const fetchVideosForPublic = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await backendApi.get('/api/v1/fetch-videos');
-      
+
       if (response.data.success) {
         return response.data.videos || [];
       }
-      
+
       return thunkAPI.rejectWithValue(response.data.message);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to fetch videos';
+      const errorMessage =
+        error.response?.data?.message || 'Failed to fetch videos';
       toast.error(errorMessage);
       return thunkAPI.rejectWithValue(errorMessage);
     }
@@ -29,21 +30,40 @@ export const fetchVideosForPublic = createAsyncThunk(
 
 // download video
 
-export const downloadVideo = createAsyncThunk('video/download', async(payload, thunkAPI) => {
-  try {
-    const {id} = payload
-    const state = thunkAPI.getState()
-    const queryParams = state.auth.loggedInUser ? `?userId=${encodeURIComponent(state.auth.loggedInUser._id)}` : ""
-    const response = await backendApi.get(`/api/v1/download/file/${id}${queryParams}`, {
-      responseType: "blob"
-    })
-
-    const contentDisposition = response.headers['content-disposition']
-    const filename = contentDisposition ? contentDisposition.split("filename")[1].replace(/[""]/g,"")
-  } catch (error) {
-    
+export const downloadVideo = createAsyncThunk(
+  'video/download',
+  async (payload, thunkAPI) => {
+    try {
+      const { id } = payload;
+      const state = thunkAPI.getState();
+      const queryParams = state.auth.loggedInUser
+        ? `?userId=${encodeURIComponent(state.auth.loggedInUser._id)}`
+        : '';
+      const response = await backendApi.get(
+        `/api/v1/download/file/${id}${queryParams}`,
+        {
+          responseType: 'blob',
+        }
+      );
+      const contentDisposition = response.headers['content-disposition'];
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/['"]/g, '')
+        : 'video.mp4';
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+      
+    }
   }
-})
+);
 
 const videoSlice = createSlice({
   name: 'video',
@@ -71,4 +91,4 @@ const videoSlice = createSlice({
 
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state) => state.video.publicVideo;
-export const selectVideoLoading = (state) => state.video.isLoading
+export const selectVideoLoading = (state) => state.video.isLoading;

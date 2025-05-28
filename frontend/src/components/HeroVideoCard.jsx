@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import parse from 'html-react-parser';
 
 import { selectLoggedInUser } from '../reducers/auth/authReducer';
+import { downloadVideo } from '../reducers/video/videoReducer';
 
 const HeroVideoCard = ({video}) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -56,6 +57,18 @@ const HeroVideoCard = ({video}) => {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
+    // Function to handle download
+    const handleDownload = async () => {
+      try {
+        setIsLoading(true)
+        await dispatch(downloadVideo({id: video._id}))
+      } catch (error) {
+        toast.error('Failed to download video')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
 
     return (
       <div
@@ -91,12 +104,17 @@ const HeroVideoCard = ({video}) => {
                 className='text-white cursor-pointer hover:text-gray-300 transition duration-300'
                 onClick={handlePlayPause}
               />
-              {
-                <FaDownload
-                  size={20}
-                  className='text-white cursor-pointer absolute bottom-2 left-2 hover:text-gray-300 transition duration-300'
-                />
-              }
+              {isLoading ? (
+              <p className="text-white cursor-pointer absolute bottom-2 left-2 hover:text-gray-300 transition duration-200">
+                Downloading ....
+              </p>
+            ) : (
+              <FaDownload
+                size={20}
+                className="text-white cursor-pointer absolute bottom-2 left-2 hover:text-gray-300 transition duration-200"
+                onClick={handleDownload}
+              />
+            )}
               <Link to={`/video/${video._id}`}>
                 <FaExternalLinkAlt
                   size={20}
