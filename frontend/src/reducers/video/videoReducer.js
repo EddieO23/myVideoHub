@@ -54,3 +54,4 @@ const videoSlice = createSlice({
 
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state) => state.video.publicVideo;
+export const selectVideoLoading = (state) => state.video.isLoading

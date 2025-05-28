@@ -23,10 +23,6 @@ const HeroVideoCard = ({video}) => {
   const dispatch = useDispatch();
   const videoRef = useRef(null);
 
-       // Debug log to see what video looks like
-  useEffect(() => {
-    console.log('Video in HeroVideoCard:', video);
-  }, [video]);
 
   useEffect(() => {
     if (video.path) {
@@ -120,8 +116,8 @@ const HeroVideoCard = ({video}) => {
             <h2 className='text-lg font-semibold'>{video.title}</h2>
             <div className='flex justify-between items-center '>
               <div className='text-gray-600 text-xs mb-1'>
-                {video.description ? (
-                  <p className='truncate'>{parse(video.description)}</p>
+                {video?.description ? (
+                  <p className='truncate'>{parse(video?.description.substring(0,100))}</p>
                 ) : (
                   <p>default description</p>
                 )}

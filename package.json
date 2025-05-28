@@ -8,6 +8,7 @@
     "start:backend": "npm --prefix backend run dev"
   },
   "dependencies": {
-    "react-quill": "^2.0.0"
+    "react-quill": "^2.0.0",
+    "slick-carousel": "^1.8.1"
   }
 }

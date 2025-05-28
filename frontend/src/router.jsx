@@ -12,9 +12,10 @@ import ResetPasswordEmail from './pages/auth/ResetPasswordEmail.jsx';
 import UpdatePassword from './pages/auth/UpdatePassword.jsx';
 import Upload from './pages/user/Upload.jsx';
 import AllVideos from './pages/AllVideos.jsx';
+import Home from './pages/Home.jsx';
 
 export const router = createBrowserRouter([
-  {path: '/', element: <h1>Welcome to My-Videohub</h1>},
+  {path: '/', element: <Home/>},
   { path: '/sign-up', element: <ProtectedRoute element={<SignUp />} />},
   { path: '/sign-in', element: <ProtectedRoute element={<SignIn />} /> },
   {
