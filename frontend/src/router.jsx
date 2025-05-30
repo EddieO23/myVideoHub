@@ -13,9 +13,11 @@ import UpdatePassword from './pages/auth/UpdatePassword.jsx';
 import Upload from './pages/user/Upload.jsx';
 import AllVideos from './pages/AllVideos.jsx';
 import Home from './pages/Home.jsx';
+import SingleVideoPage from './pages/SingleVideoPage.jsx';
 
 export const router = createBrowserRouter([
   {path: '/', element: <Home/>},
+  {path: '/video/:id', element: <SingleVideoPage/>},
   { path: '/sign-up', element: <ProtectedRoute element={<SignUp />} />},
   { path: '/sign-in', element: <ProtectedRoute element={<SignIn />} /> },
   {

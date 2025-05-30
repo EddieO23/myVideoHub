@@ -4,11 +4,12 @@ import passport from 'passport';
 import authRoute from './authRoute.js';
 import userRoute from './userRouter.js';
 import awsRoute from './awsFileRoute.js';
-import { downloadVideo, fetchVideos } from '../controllers/aws/awsFileController.js';
+import { downloadVideo, fetchSingleVideo, fetchVideos } from '../controllers/aws/awsFileController.js';
 
 const router = express.Router();
 
 router.get('/fetch-videos', fetchVideos);
+router.get('/fetch-single/video/:id', fetchSingleVideo);
 router.get('/api/v1/fetch-videos', fetchVideos);
 router.get('/download/file/:id', downloadVideo);
 router.use('/auth', authRoute);

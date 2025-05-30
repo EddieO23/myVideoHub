@@ -10,7 +10,7 @@ import {
 import { MdAccessTime } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import parse from 'html-react-parser';
+import parse from 'html-react-parser'; 
 
 import { selectLoggedInUser } from '../reducers/auth/authReducer';
 import { downloadVideo } from '../reducers/video/videoReducer';
