@@ -14,6 +14,7 @@ import Upload from './pages/user/Upload.jsx';
 import AllVideos from './pages/AllVideos.jsx';
 import Home from './pages/Home.jsx';
 import SingleVideoPage from './pages/SingleVideoPage.jsx';
+import MyVideos from './pages/user/MyVideos.jsx';
 
 export const router = createBrowserRouter([
   {path: '/', element: <Home/>},
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
   {
     path: '/user/profile',
     element: <ProtectedRouteHome element={<UserProfile />} />,
+  },
+  {
+    path: '/user/edit/my-videos',
+    element: <ProtectedRouteHome element={<MyVideos/>} />,
   },
   {
     path: '/user/upload-video',

@@ -267,11 +267,11 @@ export const updateVideo = async (req, res) => {
 export const fetchVideosForLoggedInUser = async (req, res) => {
 try {
   
-  if(req.user) {
-    const userId = req.user._id
-    if(!userId) {
-      return sendResponse(res, 400, false, 'userId not found')
-    }
+  if (req.user) {
+      const userId = req.user._id;
+      if (!userId) {
+        return sendResponse(res, 400, false, 'userId not found');
+      }
     const videos = await Video.find({uploadedBy: userId})
     return sendResponse(res, 200, true, 'Found your videos', {videos})
   }
@@ -281,3 +281,5 @@ try {
   return sendResponse(res, 500, false, 'Internal Server Error')
 }
 }
+
+

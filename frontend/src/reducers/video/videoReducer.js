@@ -10,14 +10,43 @@ const initialState = {
 
 // Fetch videos for signed in user
 
+// export const fetchVideosForUser = createAsyncThunk(
+//   `video/fetch-user-videos`,
+//   async (payload, thunkAPI) => {
+//     try {
+//       const { configwithJWT } = payload;
+//       const { data } = await backendApi.get(
+//         '/api/v1/aws/fetch-videos',
+//         configwithJWT
+//       );
+
+//       if (data.success) {
+//         return data.videos || [];
+//       }
+
+//       return thunkAPI.rejectWithValue(data.message);
+//     } catch (error) {
+//       const errorMessage =
+//         error.response?.data?.message || 'Something went wrong...';
+//       return thunkAPI.rejectWithValue(errorMessage);
+//     }
+//   }
+// );
+
 export const fetchVideosForUser = createAsyncThunk(
   `video/fetch-user-videos`,
   async (payload, thunkAPI) => {
     try {
-      const { configwithJWT } = payload;
+      const { configWithJWT } = payload;
+
+      // Check if configwithJWT is provided
+      if (!configWithJWT) {
+        return thunkAPI.rejectWithValue('JWT configuration is missing');
+      }
+
       const { data } = await backendApi.get(
         '/api/v1/aws/fetch-videos',
-        configwithJWT
+        configWithJWT
       );
 
       if (data.success) {
@@ -32,6 +61,7 @@ export const fetchVideosForUser = createAsyncThunk(
     }
   }
 );
+
 
 export const fetchVideosForPublic = createAsyncThunk(
   'video/fetch-public-videos',
@@ -125,4 +155,5 @@ const videoSlice = createSlice({
 
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state) => state.video.publicVideo;
+export const selectUserVideos = (state) => state.video.videos
 export const selectVideoLoading = (state) => state.video.isLoading;
