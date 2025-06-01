@@ -8,6 +8,31 @@ const initialState = {
   error: null,
 };
 
+// Fetch videos for signed in user
+
+export const fetchVideosForUser = createAsyncThunk(
+  `video/fetch-user-videos`,
+  async (payload, thunkAPI) => {
+    try {
+      const { configwithJWT } = payload;
+      const { data } = await backendApi.get(
+        '/api/v1/aws/fetch-videos',
+        configwithJWT
+      );
+
+      if (data.success) {
+        return data.videos || [];
+      }
+
+      return thunkAPI.rejectWithValue(data.message);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Something went wrong...';
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
 export const fetchVideosForPublic = createAsyncThunk(
   'video/fetch-public-videos',
   async (_, thunkAPI) => {
@@ -59,8 +84,7 @@ export const downloadVideo = createAsyncThunk(
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error)
-      
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -85,7 +109,17 @@ const videoSlice = createSlice({
         state.publicVideo = [];
         state.error = action.payload || 'An error occurred';
         toast.error(action.payload || 'Failed to fetch videos');
-      });
+      })
+      .addCase(fetchVideosForUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchVideosForUser.fulfilled, (state, action) => {
+      state.videos = action.payload
+      state.isLoading = false
+      })
+      .addCase(fetchVideosForUser.rejected, (state) => {
+      state.isLoading = false
+      })
   },
 });
 
