@@ -4,8 +4,8 @@ import {useDispatch, useSelector} from 'react-redux'
 
 import {fetchVideosForUser, selectUserVideos} from '../../reducers/video/videoReducer.js'
 import {useConfig} from '../../customHooks/useConfigHook.js'
-import Layout from "../../components/Layout.jsx"
-import HeroVideoCard from "../../components/HeroVideoCard.jsx"
+import SideBar from '../../components/SideBar.jsx'
+import HeroVideoCard from '../../components/HeroVideoCard.jsx'
 
 const MyVideos = () => {
   const dispatch = useDispatch()
@@ -18,27 +18,17 @@ const MyVideos = () => {
 
 
   return (
-    <Layout>
-      <div className='w-full p-4'>
-        <main className='w-[95vw]'>
-          
-          {videos?.length === 0 ? (
-            <div className='text-center text-gray-500'>
-              No videos available
-            </div>
-          ) : (
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-              {videos?.map((video, index) => (
-                <HeroVideoCard 
-                  key={index} 
-                  video={video}
-                />
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
-    </Layout>
+    <div className="flex w-full gap-2 ">
+      <SideBar/>
+      <main className="flex-1 lg:ml-64">
+        <section className="p-4 mt-3">
+          <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
+          {videos?.map((video) => 
+          <HeroVideoCard key={video._id} video={video}/>)}
+          </div>
+        </section>
+      </main>
+    </div>
   )
 }
 
