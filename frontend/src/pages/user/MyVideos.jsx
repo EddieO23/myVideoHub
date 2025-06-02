@@ -6,6 +6,7 @@ import {fetchVideosForUser, selectUserVideos} from '../../reducers/video/videoRe
 import {useConfig} from '../../customHooks/useConfigHook.js'
 import SideBar from '../../components/SideBar.jsx'
 import HeroVideoCard from '../../components/HeroVideoCard.jsx'
+import VideoCard from "../../components/VideoCard.jsx"
 
 const MyVideos = () => {
   const dispatch = useDispatch()
@@ -24,7 +25,7 @@ const MyVideos = () => {
         <section className="p-4 mt-3">
           <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
           {videos?.map((video) => 
-          <HeroVideoCard key={video._id} video={video}/>)}
+          <VideoCard key={video._id} video={video}/>)}
           </div>
         </section>
       </main>
