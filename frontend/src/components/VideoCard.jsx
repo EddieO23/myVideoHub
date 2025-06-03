@@ -16,7 +16,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 
-import { downloadVideo, deleteVideo } from '../reducers/video/videoReducer.js';
+import { downloadVideo, deleteVideo, setEditVideo } from '../reducers/video/videoReducer.js';
 import { useConfig } from '../customHooks/useConfigHook';
 import parse from "html-react-parser";
 
@@ -67,7 +67,7 @@ const VideoCard = ({ video }) => {
     }
   };
 
-  // hadnle edit
+  // handle edit
   const handleEditClick = () => {
     dispatch(setEditVideo(video));
     navigate('/user/edit/my-video');

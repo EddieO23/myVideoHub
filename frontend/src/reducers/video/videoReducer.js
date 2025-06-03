@@ -11,8 +11,6 @@ const initialState = {
 
 // Fetch videos for signed in user
 
-//Prev
-
 export const fetchVideosForUser = createAsyncThunk(
   '/video/fetch-user-videos',
   async (payload, thunkAPI) => {
@@ -141,10 +139,53 @@ export const deleteVideo = createAsyncThunk(
   }
 );
 
+// updating a given video
+
+export const updateVideo = createAsyncThunk(
+  'video/update',
+  async ({ id, updateData, configWithJwt }, thunkAPI) => {
+    try {
+      const formData = new FormData();
+
+      if (updateData.path instanceof File) {
+        formData.append('video', updateData.path);
+      }
+      if (updateData.thumbnail instanceof File) {
+        formData.append('thumbnail', updateData.thumbnail);
+      }
+      if (updateData.title) formData.append('title', updateData.title);
+      if (updateData.description)
+      formData.append('description', updateData.description);
+      formData.append('isPrivate', String(updateData.isPrivate));
+      const { data } = await backendApi.put(
+      `/api/v1/aws/update-video/${id}`,
+      formData,
+      {
+        ...configWithJwt,
+        headers: {
+          ...configWithJwt.headers,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    if(data.success && data.video) {
+      toast.success(data.message)
+    }
+    return thunkAPI.rejectWithValue(data.message)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const videoSlice = createSlice({
   name: 'video',
   initialState,
-  reducers: {},
+  reducers: {
+    setEditVideo: (state, action) => {
+      state.editVideo = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchVideosForPublic.pending, (state) => {
@@ -176,11 +217,13 @@ const videoSlice = createSlice({
         state.videos =
           state.videos?.filter((video) => video._id !== action.payload.id) ||
           null;
-      })
+      });
   },
 });
 
 export const videoReducer = videoSlice.reducer;
+export const { setEditVideo } = videoSlice.actions;
 export const selectPublicVideos = (state) => state.video.publicVideo;
 export const selectUserVideos = (state) => state.video.videos;
 export const selectVideoLoading = (state) => state.video.isLoading;
+export const selectEditingVideo = (state) => state.video.editVideo;
