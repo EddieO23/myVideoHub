@@ -272,7 +272,7 @@ try {
       if (!userId) {
         return sendResponse(res, 400, false, 'userId not found');
       }
-    const videos = await Video.find({uploadedBy: userId})
+    const videos = await Video.find({uploadedBy: userId}).populate('uploadedBy', 'email')
     return sendResponse(res, 200, true, 'Found your videos', {videos})
   }
 

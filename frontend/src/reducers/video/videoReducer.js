@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'sonner';
 
-
 import backendApi from '../../api/backendApi';
-
 
 const initialState = {
   publicVideo: [],
@@ -15,42 +13,49 @@ const initialState = {
 
 //Prev
 
-export const fetchVideosForUser = createAsyncThunk('/video/fetch-user-videos', async (payload, thunkAPI) => {
-  try {
-    const {configWithJwt} = payload
-    const {data} = await backendApi.get('/api/v1/aws/fetch-videos', configWithJwt)
-    if(data.success) {
-      return data.videos || []
+export const fetchVideosForUser = createAsyncThunk(
+  '/video/fetch-user-videos',
+  async (payload, thunkAPI) => {
+    try {
+      const { configWithJwt } = payload;
+      const { data } = await backendApi.get(
+        '/api/v1/aws/fetch-videos',
+        configWithJwt
+      );
+      if (data.success) {
+        return data.videos || [];
+      }
+      return thunkAPI.rejectWithValue(data.message);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Something went wrong...';
+      return thunkAPI.rejectWithValue(errorMessage);
     }
-    return thunkAPI.rejectWithValue(data.message)
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || 'Something went wrong...'
-    return thunkAPI.rejectWithValue(errorMessage)
   }
-})
+);
 
 // AI response
 // export const fetchVideosForUser = createAsyncThunk(
-//   '/video/fetch-user-videos', 
+//   '/video/fetch-user-videos',
 //   async (payload = {}, thunkAPI) => {
 //     try {
 //       // Destructure with default empty object
 //       const { configWithJwt = {} } = payload;
-      
+
 //       // Merge default config with passed config
 //       const config = {
 //         ...configWithJwt,
 //         // You can add default configurations here
-//         // timeout: 5000, 
+//         // timeout: 5000,
 //         // other default settings
 //       };
 
 //       const {data} = await backendApi.get('/api/v1/aws/fetch-videos', config)
-      
+
 //       if(data.success) {
 //         return data.videos || []
 //       }
-      
+
 //       return thunkAPI.rejectWithValue(data.message)
 //     } catch (error) {
 //       const errorMessage = error.response?.data?.message || 'Something went wrong...'
@@ -58,7 +63,6 @@ export const fetchVideosForUser = createAsyncThunk('/video/fetch-user-videos', a
 //     }
 //   }
 // )
-
 
 export const fetchVideosForPublic = createAsyncThunk(
   'video/fetch-public-videos',
@@ -116,6 +120,27 @@ export const downloadVideo = createAsyncThunk(
   }
 );
 
+// deleting a given video
+
+export const deleteVideo = createAsyncThunk(
+  'video/delete',
+  async ({ id, configWithJWT }, thunkAPI) => {
+    try {
+      const { data } = await backendApi.delete(
+        `/api/v1/aws/delete-single/video/${id}`,
+        configWithJWT
+      );
+
+      if (data.success) {
+        return { id };
+      }
+      return thunkAPI.rejectWithValue(data.message);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const videoSlice = createSlice({
   name: 'video',
   initialState,
@@ -141,16 +166,21 @@ const videoSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(fetchVideosForUser.fulfilled, (state, action) => {
-      state.videos = action.payload
-      state.isLoading = false
+        state.videos = action.payload;
+        state.isLoading = false;
       })
       .addCase(fetchVideosForUser.rejected, (state) => {
-      state.isLoading = false
+        state.isLoading = false;
+      })
+      .addCase(deleteVideo.fulfilled, (state, action) => {
+        state.videos =
+          state.videos?.filter((video) => video._id !== action.payload.id) ||
+          null;
       })
   },
 });
 
 export const videoReducer = videoSlice.reducer;
 export const selectPublicVideos = (state) => state.video.publicVideo;
-export const selectUserVideos = (state) => state.video.videos
+export const selectUserVideos = (state) => state.video.videos;
 export const selectVideoLoading = (state) => state.video.isLoading;

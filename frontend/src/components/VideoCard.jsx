@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   FaLock,
   FaTrash,
@@ -5,18 +6,20 @@ import {
   FaDownload,
   FaPlay,
   FaEdit,
+  FaUserCheck,
+  FaExternalLinkAlt,
+  FaShareAlt
 } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
-import {
-  deleteVideo,
-  downloadVideo,
-  IVideo,
-  setEditVideo,
-} from '../reducers/video/videoReducer.js';
-import { useConfig } from '../customHooks/useConfigHook';
 import { useDispatch } from 'react-redux';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'sonner';
+
+
+import { downloadVideo, deleteVideo } from '../reducers/video/videoReducer.js';
+import { useConfig } from '../customHooks/useConfigHook';
+import parse from "html-react-parser";
+
 
 const VideoCard = ({ video }) => {
   const { _id, title, description, isPrivate, path, thumbNail, uploadedBy } =
@@ -58,6 +61,7 @@ const VideoCard = ({ video }) => {
   const handleDelete = async () => {
     try {
       await dispatch(deleteVideo({ id: _id, configWithJWT }));
+      toast.success('Video deleted!')
     } catch (error) {
       toast.error(`Failed to delete `);
     }
@@ -147,7 +151,7 @@ const VideoCard = ({ video }) => {
           )}
 
           <div className='flex items-center text-gray-500 text-xs'>
-            <FaChalkboardUser className='mr-1' />
+            <FaUserCheck className='mr-1' />
             <span>{uploadedBy.email}</span>
           </div>
         </div>
