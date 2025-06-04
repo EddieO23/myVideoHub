@@ -12,9 +12,17 @@ dotenv.config()
 connectDb()
 
 // CORS configuration
+// const corsOptions = {
+//   origin: ['http://localhost:5173'],
+//   optionSuccessStatus: 200 // Replace with your frontend URL
+// }
+
 const corsOptions = {
-  origin: ['http://localhost:5173'],
-  optionSuccessStatus: 200 // Replace with your frontend URL
+  origin: ['http://localhost:5173'], // Make sure this matches your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
 }
 
 app.use(cors(corsOptions))

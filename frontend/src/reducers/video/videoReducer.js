@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'sonner';
+
 import backendApi from '../../api/backendApi';
 
 const initialState = {
@@ -7,6 +8,59 @@ const initialState = {
   isLoading: false,
   error: null,
 };
+
+// Fetch videos for signed in user
+
+export const fetchVideosForUser = createAsyncThunk(
+  '/video/fetch-user-videos',
+  async (payload, thunkAPI) => {
+    try {
+      const { configWithJwt } = payload;
+      const { data } = await backendApi.get(
+        '/api/v1/aws/fetch-videos',
+        configWithJwt
+      );
+      if (data.success) {
+        return data.videos || [];
+      }
+      return thunkAPI.rejectWithValue(data.message);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Something went wrong...';
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+// AI response
+// export const fetchVideosForUser = createAsyncThunk(
+//   '/video/fetch-user-videos',
+//   async (payload = {}, thunkAPI) => {
+//     try {
+//       // Destructure with default empty object
+//       const { configWithJwt = {} } = payload;
+
+//       // Merge default config with passed config
+//       const config = {
+//         ...configWithJwt,
+//         // You can add default configurations here
+//         // timeout: 5000,
+//         // other default settings
+//       };
+
+//       const {data} = await backendApi.get('/api/v1/aws/fetch-videos', config)
+
+//       if(data.success) {
+//         return data.videos || []
+//       }
+
+//       return thunkAPI.rejectWithValue(data.message)
+//     } catch (error) {
+//       const errorMessage = error.response?.data?.message || 'Something went wrong...'
+//       return thunkAPI.rejectWithValue(errorMessage)
+//     }
+//   }
+// )
 
 export const fetchVideosForPublic = createAsyncThunk(
   'video/fetch-public-videos',
@@ -59,8 +113,68 @@ export const downloadVideo = createAsyncThunk(
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error)
-      
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// deleting a given video
+
+export const deleteVideo = createAsyncThunk(
+  'video/delete',
+  async ({ id, configWithJwt }, thunkAPI) => {
+    try {
+      const { data } = await backendApi.delete(
+        `/api/v1/aws/delete-single/video/${id}`,
+        configWithJwt
+      );
+
+      if (data.success) {
+        return { id };
+      }
+      return thunkAPI.rejectWithValue(data.message);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// updating a given video
+
+export const updateVideo = createAsyncThunk(
+  'video/update',
+  async ({ id, updateData, configWithJwt }, thunkAPI) => {
+    
+    try {
+      const formData = new FormData();
+
+      if (updateData.path instanceof File) {
+        formData.append('video', updateData.path);
+      }
+      if (updateData.thumbnail instanceof File) {
+        formData.append('thumbnail', updateData.thumbnail);
+      }
+      if (updateData.title) formData.append('title', updateData.title);
+      if (updateData.description)
+      formData.append('description', updateData.description);
+      formData.append('isPrivate', String(updateData.isPrivate));
+      const { data } = await backendApi.put(
+      `/api/v1/aws/update-video/${id}`,
+      formData,
+      {
+        ...configWithJwt,
+        headers: {
+          ...configWithJwt.headers,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    if(data.success && data.video) {
+      toast.success(data.message)
+    }
+    return thunkAPI.rejectWithValue(data.message)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -68,7 +182,11 @@ export const downloadVideo = createAsyncThunk(
 const videoSlice = createSlice({
   name: 'video',
   initialState,
-  reducers: {},
+  reducers: {
+    setEditVideo: (state, action) => {
+      state.editVideo = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchVideosForPublic.pending, (state) => {
@@ -85,10 +203,28 @@ const videoSlice = createSlice({
         state.publicVideo = [];
         state.error = action.payload || 'An error occurred';
         toast.error(action.payload || 'Failed to fetch videos');
+      })
+      .addCase(fetchVideosForUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchVideosForUser.fulfilled, (state, action) => {
+        state.videos = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(fetchVideosForUser.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(deleteVideo.fulfilled, (state, action) => {
+        state.videos =
+          state.videos?.filter((video) => video._id !== action.payload.id) ||
+          null;
       });
   },
 });
 
 export const videoReducer = videoSlice.reducer;
+export const { setEditVideo } = videoSlice.actions;
 export const selectPublicVideos = (state) => state.video.publicVideo;
+export const selectUserVideos = (state) => state.video.videos;
 export const selectVideoLoading = (state) => state.video.isLoading;
+export const selectEditingVideo = (state) => state.video.editVideo;

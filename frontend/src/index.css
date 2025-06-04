@@ -18,6 +18,16 @@
   --animation-scale-pulse: scalePulse 2s infinite ease-in-out;
 }
 
+.active {
+  color: orange;
+}
+
+@layer base {
+  html{
+    font-family: 'Roboto Condensed', sans-serif;
+  }
+}
+
 /* Define keyframes outside the @theme block */
 @keyframes scalePulse {
   0%, 100% {

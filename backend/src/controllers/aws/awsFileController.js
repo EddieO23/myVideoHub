@@ -7,6 +7,7 @@ import Video from '../../model/videoSchema.js';
 import sendResponse from '../../utils/sendResponse.js';
 import { Readable } from 'stream';
 import { log } from 'console';
+import { send } from 'process';
 
 dotenv.config();
 
@@ -260,3 +261,25 @@ export const updateVideo = async (req, res) => {
     return sendResponse(res, 500, false, 'Internal server error');
   }
 };
+
+// Fetch file for given logged in user
+
+export const fetchVideosForLoggedInUser = async (req, res) => {
+try {
+  
+  if (req.user) {
+      const userId = req.user._id;
+      if (!userId) {
+        return sendResponse(res, 400, false, 'userId not found');
+      }
+    const videos = await Video.find({uploadedBy: userId}).populate('uploadedBy', 'email')
+    return sendResponse(res, 200, true, 'Found your videos', {videos})
+  }
+
+} catch (error) {
+  console.error('Error in fetching videos for loggedin eser', error);
+  return sendResponse(res, 500, false, 'Internal Server Error')
+}
+}
+
+

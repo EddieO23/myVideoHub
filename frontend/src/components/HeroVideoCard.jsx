@@ -89,7 +89,7 @@ const HeroVideoCard = ({video}) => {
         >
           <ReactPlayer
             url={video.path}
-            light={video.thumbnail}
+            light={video.thumbNail}
             width={'100%'}
             height={'100%'}
             controls={isPlaying}
