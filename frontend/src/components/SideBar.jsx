@@ -72,7 +72,7 @@ const SideBar = () => {
             <li>
               <NavLink
                 onClick={toggleSidebar}
-                to={'/user/upload-video'}
+                to={'/user/profile'}
                 className='flex items-center p-3 hover:bg-bg-two hover:text-gray-900 rounded-md'
               >
                 <FaCog size={20} className='mr-3' />
