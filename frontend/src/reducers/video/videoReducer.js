@@ -4,9 +4,11 @@ import { toast } from 'sonner';
 import backendApi from '../../api/backendApi';
 
 const initialState = {
+  videos: [],
   publicVideo: [],
+  searchResults: [],
   isLoading: false,
-  error: null,
+  editVideo: null,
 };
 
 // Fetch videos for signed in user
@@ -144,7 +146,6 @@ export const deleteVideo = createAsyncThunk(
 export const updateVideo = createAsyncThunk(
   'video/update',
   async ({ id, updateData, configWithJwt }, thunkAPI) => {
-    
     try {
       const formData = new FormData();
 
@@ -156,23 +157,43 @@ export const updateVideo = createAsyncThunk(
       }
       if (updateData.title) formData.append('title', updateData.title);
       if (updateData.description)
-      formData.append('description', updateData.description);
+        formData.append('description', updateData.description);
       formData.append('isPrivate', String(updateData.isPrivate));
       const { data } = await backendApi.put(
-      `/api/v1/aws/update-video/${id}`,
-      formData,
-      {
-        ...configWithJwt,
-        headers: {
-          ...configWithJwt.headers,
-          "Content-Type": "multipart/form-data",
-        },
+        `/api/v1/aws/update-video/${id}`,
+        formData,
+        {
+          ...configWithJwt,
+          headers: {
+            ...configWithJwt.headers,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      if (data.success && data.video) {
+        toast.success(data.message);
       }
-    );
-    if(data.success && data.video) {
-      toast.success(data.message)
+      return thunkAPI.rejectWithValue(data.message);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
     }
-    return thunkAPI.rejectWithValue(data.message)
+  }
+);
+
+// search videos
+
+export const getSearchResults = createAsyncThunk(
+  'video/search',
+  async (query, thunkAPI) => {
+    try {
+      const { publicVideos, videos } = thunkAPI.getState().video;
+      const combinedVideos = [...(publicVideos || []), ...(videos || [])];
+      const filteredVideos = combinedVideos.filter(
+        (video) =>
+          video.title?.toLowerCase().includes(query.toLowerCase()) ||
+          video.description?.toLowerCase().includes(query.toLowerCase())
+      );
+      return filteredVideos;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -218,6 +239,9 @@ const videoSlice = createSlice({
         state.videos =
           state.videos?.filter((video) => video._id !== action.payload.id) ||
           null;
+      })
+      .addCase(getSearchResults.fulfilled, (state, action) => {
+        state.searchResults = action.payload;
       });
   },
 });
@@ -228,3 +252,4 @@ export const selectPublicVideos = (state) => state.video.publicVideo;
 export const selectUserVideos = (state) => state.video.videos;
 export const selectVideoLoading = (state) => state.video.isLoading;
 export const selectEditingVideo = (state) => state.video.editVideo;
+export const selectSearchResults = (state) => state.video.searchResults

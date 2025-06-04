@@ -1,37 +1,70 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchVideosForPublic, selectPublicVideos } from '../reducers/video/videoReducer';
+import {
+  fetchVideosForPublic,
+  getSearchResults,
+  selectPublicVideos,
+  selectSearchResults,
+} from '../reducers/video/videoReducer';
 import Layout from '../components/Layout';
-import HeroVideoCard from "../components/HeroVideoCard.jsx";
+import HeroVideoCard from '../components/HeroVideoCard.jsx';
 
 const AllVideos = () => {
+  const [query, setQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const searchResults = useSelector(selectSearchResults);
   const dispatch = useDispatch();
   const publicVideos = useSelector(selectPublicVideos);
-  
+
   useEffect(() => {
+    if (searchTerm) {
+      dispatch(getSearchResults(searchTerm));
+    }
     dispatch(fetchVideosForPublic());
-  }, [dispatch]);
+  }, [dispatch, searchTerm]);
+
+  const handleSearch = () => {
+    setSearchTerm(query);
+  };
 
   return (
     <Layout>
       <div className='w-full p-4'>
         <main className='w-[95vw]'>
-          
-          
-          {publicVideos.length === 0 ? (
-            <div className='text-center text-gray-500'>
-              No videos available
-            </div>
-          ) : (
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-              {publicVideos.map((video, index) => (
-                <HeroVideoCard 
-                  key={index} 
-                  video={video}
-                />
-              ))}
-            </div>
-          )}
+          {/* Search Bar */}
+
+          <div className='mt-3 px-3 w-full flex justify-center'>
+            <input
+              type='search'
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className='w-8/12 block rounded-full p-2 focus:outline-none border border-black focus:border-none focus:outline-blue-600 bg-bgOne'
+            />
+            <button
+              onClick={handleSearch}
+              className='ml-2 px-4 py-2 bg-blue-500 text-white rounded-full'
+            >
+              Search
+            </button>
+          </div>
+
+          <div className='mt-7'>
+            {searchTerm ? (
+              <div className='grid grid-cols-1 gap-2 mg:grid-cols-2 lg:grid-cols-3'>
+                {searchResults.map((video, index) => <HeroVideoCard key={video._id} video={video}/> )}
+              </div>
+            ) : publicVideos.length === 0 ? (
+              <div className='text-center text-gray-500'>
+                No videos available
+              </div>
+            ) : (
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+                {publicVideos.map((video, index) => (
+                  <HeroVideoCard key={index} video={video} />
+                ))}
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </Layout>
