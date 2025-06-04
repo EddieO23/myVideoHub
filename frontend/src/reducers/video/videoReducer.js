@@ -122,11 +122,11 @@ export const downloadVideo = createAsyncThunk(
 
 export const deleteVideo = createAsyncThunk(
   'video/delete',
-  async ({ id, configWithJWT }, thunkAPI) => {
+  async ({ id, configWithJwt }, thunkAPI) => {
     try {
       const { data } = await backendApi.delete(
         `/api/v1/aws/delete-single/video/${id}`,
-        configWithJWT
+        configWithJwt
       );
 
       if (data.success) {
@@ -144,6 +144,7 @@ export const deleteVideo = createAsyncThunk(
 export const updateVideo = createAsyncThunk(
   'video/update',
   async ({ id, updateData, configWithJwt }, thunkAPI) => {
+    
     try {
       const formData = new FormData();
 

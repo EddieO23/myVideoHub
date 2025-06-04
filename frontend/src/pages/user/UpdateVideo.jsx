@@ -26,7 +26,7 @@ const UpdateVideo = () => {
     editVideo?.isPrivate !== undefined ? String(editVideo.isPrivate) : 'false'
   );
   const [isLoading, setIsLoading] = useState(false);
-  const { configWithJWT } = useConfig();
+  const { configWithJwt } = useConfig();
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -113,7 +113,7 @@ const handleSubmit = async (e) => {
               path: file || editVideo.path,
               thumbnail: thumbnail || editVideo.thumbNail,
             },
-            configWithJwt: configWithJWT,
+            configWithJwt: configWithJwt,
           })
         );
       }
