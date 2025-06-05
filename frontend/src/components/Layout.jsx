@@ -2,7 +2,7 @@ import React from 'react';
 import { AiFillGithub } from 'react-icons/ai';
 import { BsTwitch } from 'react-icons/bs';
 import { SiReddit } from 'react-icons/si';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const Layout = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -11,12 +11,12 @@ const Layout = ({ children }) => {
     <div className='min-h-screen bg-bg-two flex flex-col'>
       <nav className='flex items-center bg-bg-five p-4 justify-end md:text-lg border-black border-b-[1px] fixed top-0 z-50 w-full text-white'>
         <div className='flex items-center gap-3 md:gap-5 lg:gap-7 capitalize'>
-          <Link to={'/'}>Home</Link>
-          <Link to={'/all-videos'}>All Videos</Link>
+          <NavLink to={'/'}>Home</NavLink>
+          <NavLink to={'/all-videos'}>All Videos</NavLink>
           {token ? (
-            <Link to={'/user/dashboard'}>Dashboard</Link>
+            <NavLink to={'/user/dashboard'}>Dashboard</NavLink>
           ) : (
-            <Link to={'/sign-in'}>Sign In</Link>
+            <NavLink to={'/sign-in'}>Sign In</NavLink>
           )}
         </div>
       </nav>

@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Skeleton from 'react-loading-skeleton'
+
+
 import {
   fetchVideosForPublic,
   getSearchResults,
   selectPublicVideos,
   selectSearchResults,
+  selectVideoLoading,
 } from '../reducers/video/videoReducer';
 import Layout from '../components/Layout';
 import HeroVideoCard from '../components/HeroVideoCard.jsx';
@@ -13,6 +17,7 @@ const AllVideos = () => {
   const [query, setQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const searchResults = useSelector(selectSearchResults);
+  const isLoading = useSelector(selectVideoLoading)
   const dispatch = useDispatch();
   const publicVideos = useSelector(selectPublicVideos);
 
@@ -57,7 +62,18 @@ const AllVideos = () => {
               <div className='text-center text-gray-500'>
                 No videos available
               </div>
-            ) : (
+            ) : 
+            isLoading ? <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+              {[...Array(4)].map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    height={300}
+                    width={200}
+                    className="rounded-lg"
+                  />
+                ))}
+            </div> : 
+            (
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
                 {publicVideos.map((video, index) => (
                   <HeroVideoCard key={index} video={video} />

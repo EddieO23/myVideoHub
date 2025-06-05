@@ -36,7 +36,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-1">Name</h3>
-                  <p className="text-gray-700 capitalize">
+                  <p className="text-gray-700 uppercase">
                     {loggedInUser?.name}
                   </p>
                 </div>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaPlay } from 'react-icons/fa';
-import ReactPlayer from "react-player";
+import ReactPlayer from 'react-player';
+import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from 'react-loading-skeleton'
 
 
 import {
@@ -11,7 +13,6 @@ import {
 } from '../reducers/video/videoReducer.js';
 import Layout from '../components/Layout.jsx';
 import VideoSlider from '../components/Slider.jsx';
-
 
 const Home = () => {
   const publicVideos = useSelector(selectPublicVideos);
@@ -39,8 +40,10 @@ const Home = () => {
               including AWS deployment and real-world projects. Get ready for a
               career in web development.
             </p>
-            <button className="bg-blue-500 text-white w-16 h-16 rounded-full flex  animate-scale-pulse justify-center items-center mt-4
-              transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg hover:scale-105 transform">
+            <button
+              className='bg-blue-500 text-white w-16 h-16 rounded-full flex  animate-scale-pulse justify-center items-center mt-4
+              transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg hover:scale-105 transform'
+            >
               <FaPlay className='text-4xl' />
             </button>
             <button
@@ -72,9 +75,16 @@ const Home = () => {
         <h2 className='capitalize text-textTwo  text-lg sm:text-2xl md:text-3xl lg:text-4xl  mt-2 p-4'>
           Recently Added
         </h2>
-        <div className="p-4">
-        <VideoSlider videos={publicVideos}/>
-        </div>
+
+        {isLoading ? (
+          <div className='w-full flex justify-center'>
+            <Skeleton height={300} width={800}/>
+          </div>
+        ) : (
+          <div className='p-4'>
+            <VideoSlider videos={publicVideos} />
+          </div>
+        )}
       </main>
     </Layout>
   );
