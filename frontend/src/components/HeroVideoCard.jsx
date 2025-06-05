@@ -42,7 +42,7 @@ const HeroVideoCard = ({video}) => {
   };
 
   const handleShare = () => {
-    const videoLink = `http://localhost:5173/video/${video._id}`;
+    const videoLink = `https://my-video-hub-dusky.vercel.app/${video._id}`;
     navigator.clipboard.writeText(videoLink).then(() => {
       toast.success('Video link copied to clipboard!');
     });
