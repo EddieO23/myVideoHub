@@ -16,6 +16,7 @@ import Home from './pages/Home.jsx';
 import SingleVideoPage from './pages/SingleVideoPage.jsx';
 import MyVideos from './pages/user/MyVideos.jsx';
 import UpdateVideo from './pages/user/UpdateVideo.jsx';
+import Dashboard from './pages/user/Dashboard.jsx';
 
 export const router = createBrowserRouter([
   {path: '/', element: <Home/>},
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
   {
     path: '/user/profile',
     element: <ProtectedRouteHome element={<UserProfile />} />,
+  },
+  {
+    path: '/user/dashboard',
+    element: <ProtectedRouteHome element={<Dashboard />} />,
   },
   {
     path: '/user/edit/my-videos',

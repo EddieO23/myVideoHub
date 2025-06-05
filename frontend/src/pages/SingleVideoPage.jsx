@@ -85,7 +85,8 @@ const SingleVideoPage = () => {
                 <FaPlay className="text-4xl" />
               </button>
 
-              {/* Download Button */}
+              {/* 
+               Button */}
               <button
                 className={`bg-green-500 text-white w-16 h-16 rounded-full flex justify-center items-center transition duration-300 ease-in-out transform ${
                   isDownloading
