@@ -19,7 +19,7 @@ connectDb();
 const corsOptions = {
   origin: [
     'http://localhost:5173',
-    'https://my-video-2qjzzd4em-eddies-projects-8c9067ff.vercel.app',
+    'https://my-video-hub-dusky.vercel.app',
   ], // Make sure this matches your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
