@@ -18,7 +18,7 @@ connectDb()
 // }
 
 const corsOptions = {
-  origin: ['http://localhost:5173'], // Make sure this matches your frontend URL
+  origin: ['http://localhost:5173', "https://my-video-hub-backend-api-eta.vercel.app"], // Make sure this matches your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -31,6 +31,8 @@ app.use(passportJwtStrategy.initialize())
 
 
 const port = process.env.PORT || 8000
+
+app.get('/', (req, res) => res.send('Hello world.'))
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))

@@ -1,14 +1,8 @@
-// import axios from 'axios';
-
-// const backendApi = axios.create({baseURL: 'http://localhost:8000'});
-
-// export default backendApi;
-
-
 import axios from 'axios';
 
 const backendApi = axios.create({
-  baseURL: 'http://localhost:8000',
+  // baseURL: 'http://localhost:8000',
+  baseURL: "https://my-video-hub-backend-api-eta.vercel.app",
   headers: {
     'Content-Type': 'application/json'
   }
