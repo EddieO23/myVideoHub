@@ -42,4 +42,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }).catch(console.error);
 }
 
-export default app;
+
